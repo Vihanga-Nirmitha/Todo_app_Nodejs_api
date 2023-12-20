@@ -1,6 +1,7 @@
 import {Router} from "express";
 import {Request, Response} from "express";
-import mysql from 'mysql2/promise';
+import mysql, {ResultSetHeader} from 'mysql2/promise';
+import {TaskTo} from "../to/task.to";
 
 const controller = Router();
 controller.get('/',getAlltasks)
@@ -17,12 +18,21 @@ const pool = mysql.createPool({
     connectionLimit: +process.env.DB_CONNECTION_LIMIT!
 });
 
-function getAlltasks(req:Request, res: Response){
+async function getAlltasks(req:Request, res: Response){
     if(!req.query.email) res.sendStatus(400);
-    res.send('<h1>Customer controller: GET</h1>')
+    const connection = await pool.getConnection()
+    const [taskList] = await connection.execute('SELECT * FROM task WHERE email = ?',[req.query.email]);
+    res.json(taskList);
+    pool.releaseConnection(connection);
 }
-function saveTask(req:Request, res: Response){
-    res.send('<h1>Customer controller: POST</h1>')
+async function saveTask(req:Request, res: Response){
+    const task = <TaskTo>req.body;
+    const connection = await pool.getConnection();
+    const [{insertId}] = await connection.execute<ResultSetHeader>('INSERT INTO task (description, status, email) TABLE (?,false,?)',[task.description,task.email]);
+    task.id = insertId;
+    task.status = false;
+    res.status(201).json(task);
+
 }
 
 function updateTask(req:Request, res: Response){
