@@ -1,5 +1,6 @@
 import {Router} from "express";
 import {Request, Response} from "express";
+import mysql from 'mysql2/promise';
 
 const controller = Router();
 controller.get('/',getAlltasks)
@@ -8,6 +9,7 @@ controller.patch('/:id',updateTask)
 controller.delete('/:id',deleteTask)
 
 function getAlltasks(req:Request, res: Response){
+    if(!req.query.email) res.sendStatus(400);
     res.send('<h1>Customer controller: GET</h1>')
 }
 function saveTask(req:Request, res: Response){

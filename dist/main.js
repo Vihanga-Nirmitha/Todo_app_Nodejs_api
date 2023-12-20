@@ -32,6 +32,8 @@ const task_http_controller_1 = require("./controller/task.http.controller");
 const app = (0, express_1.default)();
 app.use((0, express_1.json)());
 app.use((0, cors_1.default)());
+app.use((req, res, next) => {
+});
 app.use('/api/v1/tasks', task_http_controller_1.TaskHttpController);
 app.listen(8080, () => console.log("Server is listening to 8080"));
 //# sourceMappingURL=main.js.map

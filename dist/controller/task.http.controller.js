@@ -9,6 +9,8 @@ controller.post('/', saveTask);
 controller.patch('/:id', updateTask);
 controller.delete('/:id', deleteTask);
 function getAlltasks(req, res) {
+    if (!req.query.email)
+        res.sendStatus(400);
     res.send('<h1>Customer controller: GET</h1>');
 }
 function saveTask(req, res) {
